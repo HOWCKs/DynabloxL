@@ -135,7 +135,7 @@ class LedIndicator @JvmOverloads constructor(
         if (!text.isNullOrBlank()) {
             labelPaint.textSize = sp(9.5f)
             labelPaint.color = if (lit) tokens.textSecondary else tokens.textFaint
-            val baseline = cy - (labelPaint.descent() + labelPaint.ascent) / 2f
+            val baseline = cy - (labelPaint.descent() + labelPaint.ascent()) / 2f
             canvas.drawText(text, dot + dp(7f), baseline, labelPaint)
         }
     }
@@ -285,13 +285,13 @@ class DigitalReadout @JvmOverloads constructor(
 
         val ghost = "8".repeat(digits)
         val centerX = well.centerX() - (unit?.let { unitPaint.textSize = sp(9.5f); unitPaint.measureText(it) } ?: 0f) / 2f
-        val baseline = contentTop + available / 2f - (digitPaint.descent() + digitPaint.ascent) / 2f + dp(1f)
+        val baseline = contentTop + available / 2f - (digitPaint.descent() + digitPaint.ascent()) / 2f + dp(1f)
 
         ghostPaint.color = Tint.alphaFraction(accentColor, 0.10f)
         canvas.drawText(ghost, centerX, baseline, ghostPaint)
 
         if (flashAmount > 0.01f) {
-            Skeuo.drawGlow(canvas, centerX, baseline + digitPaint.ascent / 2f, well.width() * 0.45f, accentColor, flashAmount)
+            Skeuo.drawGlow(canvas, centerX, baseline + digitPaint.ascent() / 2f, well.width() * 0.45f, accentColor, flashAmount)
         }
 
         digitPaint.color = accentColor

@@ -217,9 +217,9 @@ class IconTile @JvmOverloads constructor(
         paint.reset()
         paint.isAntiAlias = true
         paint.color = Tint.alphaFraction(Color.BLACK, 0.55f)
-        canvas.drawCircle(starGlyph.centerX(), starGlyph.centerY(), size * 0.62f, paint)
+        canvas.drawCircle(starGlyph.centerX().toFloat(), starGlyph.centerY().toFloat(), size * 0.62f, paint)
         paint.color = tokens.metalLight
-        canvas.drawCircle(starGlyph.centerX(), starGlyph.centerY(), size * 0.56f, paint)
+        canvas.drawCircle(starGlyph.centerX().toFloat(), starGlyph.centerY().toFloat(), size * 0.56f, paint)
         star.bounds = starGlyph
         star.setTint(tokens.warning)
         star.draw(canvas)

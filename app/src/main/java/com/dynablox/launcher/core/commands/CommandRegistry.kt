@@ -9,6 +9,7 @@ import com.dynablox.launcher.R
 import com.dynablox.launcher.controls.AccessibilityGlobalAction
 import com.dynablox.launcher.accessibility.DynabloxAccessibilityService
 import com.dynablox.launcher.core.AppSettings
+import com.dynablox.launcher.core.roblox.LaunchOutcome
 import com.dynablox.launcher.core.roblox.RobloxLauncher
 import com.dynablox.launcher.di.AppContainer
 import com.dynablox.launcher.optimize.Optimizer
@@ -127,18 +128,18 @@ class CommandRegistry(private val container: AppContainer) {
             val settings = ctx.container.settings
             val placeId = settings.customPlaceId.ifBlank { settings.selectedPlaceId }
             when (ctx.container.roblox.launch(placeId)) {
-                RobloxLauncher.LaunchOutcome.LAUNCHED ->
+                LaunchOutcome.LAUNCHED ->
                     ctx.container.sessionStarted()
 
-                RobloxLauncher.LaunchOutcome.DEEP_LINK_FAILED_FALLBACK -> {
+                LaunchOutcome.DEEP_LINK_FAILED_FALLBACK -> {
                     ctx.container.sessionStarted()
                     ctx.feedback.show("Deep link unavailable — opened the Roblox client", CommandFeedback.Kind.WARNING)
                 }
 
-                RobloxLauncher.LaunchOutcome.NOT_INSTALLED ->
+                LaunchOutcome.NOT_INSTALLED ->
                     ctx.feedback.show(ctx.context.getString(R.string.err_no_roblox), CommandFeedback.Kind.ERROR)
 
-                RobloxLauncher.LaunchOutcome.FAILED ->
+                LaunchOutcome.FAILED ->
                     ctx.feedback.show(ctx.context.getString(R.string.state_error), CommandFeedback.Kind.ERROR)
             }
         },

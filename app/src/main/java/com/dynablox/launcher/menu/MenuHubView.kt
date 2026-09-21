@@ -292,7 +292,7 @@ class MenuHubView(
             try {
                 command.action(CommandContext(this@MenuHubView.context, container, feedback))
             } catch (t: Throwable) {
-                feedback.show(this@MenuHubView.getString(R.string.err_generic, t.message ?: "error"), CommandFeedback.Kind.ERROR)
+                feedback.show(this@MenuHubView.context.getString(R.string.err_generic, t.message ?: "error"), CommandFeedback.Kind.ERROR)
             }
             refreshAfterCommand(command)
         }

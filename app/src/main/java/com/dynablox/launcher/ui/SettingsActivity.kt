@@ -232,11 +232,11 @@ class SettingsActivity : DbxActivity() {
                 tokens.accent,
             )
             FxPresets.ALL.chunked(3).forEach { chunk ->
-                val row = LinearLayout(this).apply {
+                val row = LinearLayout(this@SettingsActivity).apply {
                     orientation = LinearLayout.HORIZONTAL
                 }
                 chunk.forEach { preset ->
-                    val button = com.dynablox.launcher.design.widgets.PhysicalButton(this).apply {
+                    val button = com.dynablox.launcher.design.widgets.PhysicalButton(this@SettingsActivity).apply {
                         label = getString(preset.nameRes)
                         shape = com.dynablox.launcher.design.widgets.PhysicalButton.Shape.CAPSULE
                         isActivated = settings.fxPreset == preset.id

@@ -128,7 +128,7 @@ class PerfEngine(
         battery.stop()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
-                powerManager.removeThermalStatusListener(thermalExecutor, thermalListener)
+                powerManager.removeThermalStatusListener(thermalListener)
             } catch (_: Throwable) {
                 // Already removed.
             }

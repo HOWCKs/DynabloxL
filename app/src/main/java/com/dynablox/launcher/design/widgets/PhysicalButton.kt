@@ -278,7 +278,7 @@ class PhysicalButton @JvmOverloads constructor(
         val label = label
         if (label != null) {
             val baseline = if (subLabel == null) {
-                area.centerY() - (mediumPaint.descent() + mediumPaint.ascent) / 2f
+                area.centerY() - (mediumPaint.descent() + mediumPaint.ascent()) / 2f
             } else {
                 area.centerY() - dp(2f)
             }

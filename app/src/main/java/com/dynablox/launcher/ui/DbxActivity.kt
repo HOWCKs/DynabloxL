@@ -348,7 +348,7 @@ abstract class DbxActivity : AppCompatActivity(), CommandFeedback {
         }
         row.addView(textBlock, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         val toggle = ToggleSwitch(context).apply {
-            isChecked = checked
+            setChecked(checked)
             isEnabled = enabled
             a11yLabel = label
             onCheckedChanged = { value -> onChange(value) }
@@ -449,6 +449,7 @@ abstract class DbxActivity : AppCompatActivity(), CommandFeedback {
         icon: android.graphics.drawable.Drawable? = null,
         @DrawableRes iconRes: Int? = null,
         accent: Int? = null,
+        enabled: Boolean = true,
         onClick: () -> Unit,
     ): PhysicalButton {
         val button = PhysicalButton(context).apply {
@@ -459,6 +460,8 @@ abstract class DbxActivity : AppCompatActivity(), CommandFeedback {
             accentOverride = accent
             shape = PhysicalButton.Shape.CAPSULE
             contentDescription = label
+            isEnabled = enabled
+            alpha = if (enabled) 1f else 0.55f
             setOnClickListener { onClick() }
         }
         addView(
@@ -519,6 +522,7 @@ abstract class DbxActivity : AppCompatActivity(), CommandFeedback {
     }
 
     protected fun scrollToEnd() {
-        scrollView?.post { it.fullScroll(View.FOCUS_DOWN) }
+        val target = scrollView ?: return
+        target.post { target.fullScroll(View.FOCUS_DOWN) }
     }
 }

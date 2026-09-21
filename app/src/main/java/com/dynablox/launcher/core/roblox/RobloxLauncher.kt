@@ -90,13 +90,16 @@ class RobloxLauncher(private val context: Context) {
     }
 
     /** Resolves the launcher intent for any installed app (used by the app category). */
-    fun launchPackage(pkg: String): Boolean = try {
-        val intent = context.packageManager.getLaunchIntentForPackage(pkg) ?: return false
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-        true
-    } catch (_: Throwable) {
-        false
+    fun launchPackage(pkg: String): Boolean {
+        return try {
+            val intent = context.packageManager.getLaunchIntentForPackage(pkg)
+                ?: return false
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            true
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     fun launchableApps(limit: Int = 60): List<AppEntry> {

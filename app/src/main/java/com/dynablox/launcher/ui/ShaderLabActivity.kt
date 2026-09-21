@@ -58,7 +58,7 @@ class ShaderLabActivity : DbxActivity() {
     private fun buildPreview() {
         section(R.string.shader_section_preview, R.string.shader_section_preview_desc)
         card {
-            val gl = GLSurfaceView(this).apply {
+            val gl = GLSurfaceView(this@ShaderLabActivity).apply {
                 setEGLContextClientVersion(2)
                 setRenderer(renderer)
                 renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
@@ -99,10 +99,10 @@ class ShaderLabActivity : DbxActivity() {
     private fun buildPresetPicker() {
         section(R.string.shader_section_presets, R.string.shader_section_presets_desc)
         card {
-            val scroll = HorizontalScrollView(this).apply { isHorizontalScrollBarEnabled = false }
-            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            val scroll = HorizontalScrollView(this@ShaderLabActivity).apply { isHorizontalScrollBarEnabled = false }
+            val row = LinearLayout(this@ShaderLabActivity).apply { orientation = LinearLayout.HORIZONTAL }
             ShaderPresets.ALL.forEach { preset ->
-                val button = PhysicalButton(this).apply {
+                val button = PhysicalButton(this@ShaderLabActivity).apply {
                     label = getString(preset.nameRes)
                     shape = PhysicalButton.Shape.CAPSULE
                     isActivated = preset.id == currentPreset.id

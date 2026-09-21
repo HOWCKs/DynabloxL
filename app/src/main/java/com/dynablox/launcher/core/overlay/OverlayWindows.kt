@@ -134,9 +134,11 @@ class OverlayWindows(private val context: Context) {
     fun updateView(view: android.view.View, params: WindowManager.LayoutParams) =
         windowManager.updateViewLayout(view, params)
 
-    fun removeView(view: android.view.View) = try {
-        if (view.isAttachedToWindow) windowManager.removeView(view)
-    } catch (_: Throwable) {
-        // Already detached.
+    fun removeView(view: android.view.View) {
+        try {
+            if (view.isAttachedToWindow) windowManager.removeView(view)
+        } catch (_: Throwable) {
+            // Already detached.
+        }
     }
 }

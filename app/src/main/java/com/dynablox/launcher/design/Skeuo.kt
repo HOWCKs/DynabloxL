@@ -80,10 +80,11 @@ object Skeuo {
     /** Hairline separation between stacked surfaces. */
     fun drawHairline(canvas: Canvas, box: RectF, radius: Float, color: Int, widthDp: Float, density: Float) {
         val w = (widthDp * density).coerceAtLeast(0.5f)
+        val lineColor = color
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             strokeWidth = w
-            color = color
+            this.color = lineColor
         }
         inset(box, w / 2f, rect)
         val r = (radius - w / 2f).coerceAtLeast(0f)

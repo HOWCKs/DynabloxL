@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import rikka.shizuku.Shizuku
-import rikka.shizuku.Sui
 
 /** Result of a shell command executed with shell (or root, via Sui) identity. */
 data class ShellResult(
@@ -56,8 +55,8 @@ class ShizukuController(private val context: Context) {
 
     private var attached = false
 
-    private val binderReceived = Shizuku.BinderReceivedListener { refresh() }
-    private val binderDead = Shizuku.BinderDeadListener { refresh() }
+    private val binderReceived = Shizuku.OnBinderReceivedListener { refresh() }
+    private val binderDead = Shizuku.OnBinderDeadListener { refresh() }
     private val permissionListener = Shizuku.OnRequestPermissionResultListener { _, grantResult ->
         val granted = grantResult == PackageManager.PERMISSION_GRANTED
         Log.i(TAG, "permission result: granted=$granted")
@@ -67,10 +66,16 @@ class ShizukuController(private val context: Context) {
     fun attach() {
         if (attached) return
         attached = true
+        // Sui ships in the Magisk module, not in the Shizuku API artifact, so it is bound by
+        // reflection: present -> root identity without a per-boot restart, absent -> plain Shizuku.
         try {
-            if (Sui.init(context.packageName)) {
+            val sui = Class.forName("rikka.sui.Sui")
+            val init = sui.getDeclaredMethod("init", String::class.java)
+            if (init.invoke(null, context.packageName) == true) {
                 _backend.value = "sui"
             }
+        } catch (_: ClassNotFoundException) {
+            // Sui not installed; Shizuku handles it.
         } catch (t: Throwable) {
             Log.w(TAG, "Sui init failed", t)
         }
@@ -151,7 +156,7 @@ class ShizukuController(private val context: Context) {
         if (!isGranted) return ShellResult.UNAVAILABLE
         val started = SystemClock.elapsedRealtime()
         return try {
-            val process = Shizuku.newProcess(arrayOf("sh", "-c", command))
+            val process = shizukuProcess(arrayOf("sh", "-c", command))
             val output = process.inputStream.reader().readLimited(maxOutputChars)
             val error = process.errorStream.reader().readLimited(4096)
             val code = process.waitFor()
@@ -166,6 +171,21 @@ class ShizukuController(private val context: Context) {
             Log.w(TAG, "exec failed: $command", t)
             ShellResult(-1, "", t.message ?: "shell failure", true, SystemClock.elapsedRealtime() - started)
         }
+    }
+
+    /**
+     * [Shizuku.newProcess] is private in API 13 (it is scheduled for removal in 14) yet it remains
+     * the only way to run a shell line through the Shizuku service, so it is reached reflectively.
+     */
+    private fun shizukuProcess(cmd: Array<String>): Process {
+        val method = Shizuku::class.java.getDeclaredMethod(
+            "newProcess",
+            Array<String>::class.java,
+            Array<String>::class.java,
+            String::class.java,
+        )
+        method.isAccessible = true
+        return method.invoke(null, cmd, null, null) as Process
     }
 
     suspend fun exec(command: String, maxOutputChars: Int = 32_768): ShellResult =

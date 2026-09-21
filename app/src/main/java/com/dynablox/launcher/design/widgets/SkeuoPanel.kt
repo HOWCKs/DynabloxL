@@ -18,7 +18,7 @@ import com.dynablox.launcher.design.SkeuoTheme
 import com.dynablox.launcher.design.ThemeTokens
 
 /** A container that paints one of the five physical finishes behind its children. */
-class SkeuoPanel @JvmOverloads constructor(
+open class SkeuoPanel @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,

@@ -103,7 +103,7 @@ class SearchField @JvmOverloads constructor(
             iconPaint.reset()
             iconPaint.isAntiAlias = true
             iconPaint.color = Tint.alphaFraction(tokens.textFaint, 0.28f)
-            canvas.drawCircle(clearBounds.centerX(), clearBounds.centerY(), clearSize * 0.62f, iconPaint)
+            canvas.drawCircle(clearBounds.centerX().toFloat(), clearBounds.centerY().toFloat(), clearSize * 0.62f, iconPaint)
             clearIcon?.let {
                 it.bounds = clearBounds
                 it.setTint(tokens.textSecondary)

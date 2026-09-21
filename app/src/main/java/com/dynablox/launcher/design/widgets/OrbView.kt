@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import com.dynablox.launcher.R
 import com.dynablox.launcher.design.Motion
 import com.dynablox.launcher.design.Skeuo
+import com.dynablox.launcher.design.SkeuoPathHolder
 import com.dynablox.launcher.design.SkeuoTheme
 import com.dynablox.launcher.design.Textures
 import com.dynablox.launcher.design.Tint
@@ -414,7 +415,7 @@ class OrbView @JvmOverloads constructor(
             badgePaint.color = Color.WHITE
             canvas.drawText(
                 text, bx,
-                by - (badgePaint.descent() + badgePaint.ascent) / 2f,
+                by - (badgePaint.descent() + badgePaint.ascent()) / 2f,
                 badgePaint,
             )
         }

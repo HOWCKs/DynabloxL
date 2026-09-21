@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
@@ -306,7 +307,7 @@ class HubPanel(
             try {
                 command.action(CommandContext(this@HubPanel.context, container, this@HubPanel))
             } catch (t: Throwable) {
-                show(this@HubPanel.getString(R.string.err_generic, t.message ?: "error"), CommandFeedback.Kind.ERROR)
+                show(this@HubPanel.context.getString(R.string.err_generic, t.message ?: "error"), CommandFeedback.Kind.ERROR)
             }
             refreshStatus()
         }

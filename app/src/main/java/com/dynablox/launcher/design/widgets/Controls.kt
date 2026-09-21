@@ -17,6 +17,7 @@ import com.dynablox.launcher.design.MaterialOptions
 import com.dynablox.launcher.design.Materials
 import com.dynablox.launcher.design.Motion
 import com.dynablox.launcher.design.Skeuo
+import com.dynablox.launcher.design.SkeuoPathHolder
 import com.dynablox.launcher.design.SkeuoTheme
 import com.dynablox.launcher.design.Textures
 import com.dynablox.launcher.design.Tint

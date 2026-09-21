@@ -212,7 +212,7 @@ class BatterySampler(context: Context) {
             val level = extras.getInt(BatteryManager.EXTRA_LEVEL, -1)
             val scale = extras.getInt(BatteryManager.EXTRA_SCALE, 100)
             val tenths = extras.getInt(BatteryManager.EXTRA_TEMPERATURE, 0)
-            val status = extras.getInt(BatteryManager.EXTRA_STATUS, BatteryManager.UNKNOWN)
+            val status = extras.getInt(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN)
             val plugged = extras.getInt(BatteryManager.EXTRA_PLUGGED, 0)
             last = Reading(
                 percent = if (level >= 0 && scale > 0) (level * 100 / scale) else -1,
