@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.dynablox.launcher.R
+import com.dynablox.launcher.design.Material
 import com.dynablox.launcher.design.MaterialOptions
 import com.dynablox.launcher.design.Materials
 import com.dynablox.launcher.design.Motion
@@ -24,6 +25,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * Physical rocker switch: recessed rubber track, machined thumb with knurling, two status lamps.

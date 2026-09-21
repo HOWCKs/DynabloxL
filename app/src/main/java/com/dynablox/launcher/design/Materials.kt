@@ -203,8 +203,8 @@ object Materials {
         tokens: ThemeTokens,
         options: MaterialOptions,
     ) {
-        val top: Int
-        val bottom: Int
+        var top: Int = tokens.surfaceRaised
+        var bottom: Int = tokens.metalDark
         var mid: Int? = null
 
         when (material) {
@@ -249,11 +249,14 @@ object Materials {
             }
         }
 
-        val tintedTop = options.tint?.let { Tint.mix(top, it, options.tintAmount) } ?: top
-        val tintedBottom = options.tint?.let { Tint.mix(bottom, it, options.tintAmount) } ?: bottom
+        val baseTop = top
+        val baseBottom = bottom
+        val baseMid = mid
+        val tintedTop = options.tint?.let { Tint.mix(baseTop, it, options.tintAmount) } ?: baseTop
+        val tintedBottom = options.tint?.let { Tint.mix(baseBottom, it, options.tintAmount) } ?: baseBottom
 
-        state.bodyShader = if (mid != null) {
-            val tintedMid = options.tint?.let { Tint.mix(mid, it, options.tintAmount) } ?: mid
+        state.bodyShader = if (baseMid != null) {
+            val tintedMid = options.tint?.let { Tint.mix(baseMid, it, options.tintAmount) } ?: baseMid
             android.graphics.LinearGradient(
                 box.left, box.top, box.left * 0.98f + box.right * 0.02f, box.bottom,
                 intArrayOf(tintedTop, tintedMid, tintedBottom),

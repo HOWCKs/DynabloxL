@@ -67,7 +67,6 @@ jobs:
           else
             echo "::warning::sdkmanager not found — relying on the pre-installed SDK."
           fi
-          "$SDK/platform-tools/adb" --version || true
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -75,7 +74,6 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.gradle/configuration-cache
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -123,21 +121,92 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Compile Kotlin (fast feedback)
-        run: ./gradlew --no-daemon --stacktrace :app:compile${{ matrix.variant == 'release' && 'Release' || 'Debug' }}Kotlin
+      - name: Build ${{ matrix.variant }} (compile + tests + assemble)
+        id: gradle
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          TASKS=":app:compile${{ matrix.variant == 'release' && 'Release' || 'Debug' }}Kotlin testDebugUnitTest assemble${{ matrix.variant == 'release' && 'Release' || 'Debug' }}"
+          ./gradlew --no-daemon --stacktrace $TASKS 2>&1 | tee build-${{ matrix.variant }}.log
+          EXIT=${PIPESTATUS[0]}
+          echo "gradle_exit=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
 
-      - name: Unit tests
-        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
+      - name: Publish failure details as annotations
+        if: steps.gradle.outcome == 'failure'
+        env:
+          LOG_FILE: build-${{ matrix.variant }}.log
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
 
-      - name: Assemble ${{ matrix.variant }} APK
-        run: ./gradlew --no-daemon --stacktrace assemble${{ matrix.variant == 'release' && 'Release' || 'Debug' }}
+          path = os.environ["LOG_FILE"]
+          raw = open(path, "r", errors="replace").read()
+          lines = raw.splitlines()
 
-      - name: Lint report (non blocking)
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_lint == 'true'
+          def esc(text):
+              return (text.replace("%", "%25")
+                          .replace("\r", "%0D")
+                          .replace("\n", "%0A"))
+
+          interesting = []
+          patterns = (
+              re.compile(r"^e: "),
+              re.compile(r"^w: .*(deprecat|unresolved)", re.I),
+              re.compile(r"error:", re.I),
+              re.compile(r"AAPT|aapt2"),
+              re.compile(r"^FAILURE:"),
+              re.compile(r"What went wrong"),
+              re.compile(r"^\* Try"),
+              re.compile(r"^\* Exception"),
+              re.compile(r"^> Task .*FAILED"),
+              re.compile(r"Caused by:"),
+              re.compile(r"Unresolved reference"),
+              re.compile(r"Execution failed for task"),
+          )
+          for i, line in enumerate(lines):
+              if any(p.search(line) for p in patterns):
+                  interesting.append(line.strip()[:400])
+                  # keep the two following lines for context on gradle failures
+                  if "What went wrong" in line or "Execution failed" in line:
+                      for j in range(1, 4):
+                          if i + j < len(lines):
+                              interesting.append("    " + lines[i + j].strip()[:400])
+
+          if not interesting:
+              interesting = [l.strip()[:400] for l in lines[-120:] if l.strip()]
+
+          # de-duplicate while preserving order
+          seen = set()
+          unique = []
+          for line in interesting:
+              if line not in seen:
+                  seen.add(line)
+                  unique.append(line)
+
+          body = "\n".join(unique)
+          if len(body) > 24000:
+              body = body[:24000] + "\n... (truncated)"
+
+          chunk = 3000
+          parts = [body[i:i + chunk] for i in range(0, len(body), chunk)] or ["no matching output"]
+          for index, part in enumerate(parts, start=1):
+              print("::error title=Build failure %d/%d (%s)::%s" % (
+                  index, len(parts), os.path.basename(path), esc(part)))
+
+          with open(os.environ.get("GITHUB_STEP_SUMMARY", "/dev/null"), "a") as summary:
+              summary.write("### Build failure — %s\n\n```\n%s\n```\n" % (os.path.basename(path), body[:12000]))
+          sys.exit(1)
+          PY
+
+      - name: Lint report (non blocking, manual runs only)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_lint == 'true' && steps.gradle.outcome == 'success'
         continue-on-error: true
         run: ./gradlew --no-daemon lintDebug
 
       - name: Collect artifacts
+        if: steps.gradle.outcome == 'success'
         run: |
           set -euo pipefail
           mkdir -p dist
@@ -154,13 +223,11 @@ jobs:
             exit 1
           fi
           cp "$SRC" "$OUT"
-          if [ -f app/build/reports/lint-results-debug.html ]; then
-            mkdir -p dist/lint && cp app/build/reports/lint-results-debug.* dist/lint/ || true
-          fi
           sha256sum "$OUT" | tee "dist/$(basename "$OUT").sha256"
           ls -la dist
 
       - name: Upload APK artifact
+        if: steps.gradle.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: DynabloxL-${{ matrix.variant }}-apk
@@ -168,8 +235,17 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Upload build log (on failure)
+        if: steps.gradle.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.variant }}
+          path: build-${{ matrix.variant }}.log
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Publish GitHub Release (tags only)
-        if: matrix.variant == 'release' && startsWith(github.ref, 'refs/tags/')
+        if: matrix.variant == 'release' && steps.gradle.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -190,4 +266,4 @@ jobs:
             echo "::error::APK build failed (${{ needs.build.result }})"
             exit 1
           fi
-          echo "✅ DynabloxL APK build is green."
+          echo "DynabloxL APK build is green."
