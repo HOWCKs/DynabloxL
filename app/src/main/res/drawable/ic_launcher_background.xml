@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DynabloxL adaptive icon background: studio-lit graphite with a petrol glow. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FF0E1215" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.5"
+                android:centerY="0.34"
+                android:endColor="#00000000"
+                android:gradientRadius="70"
+                android:startColor="#FF1C6280"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:centerColor="#00000000"
+                android:endColor="#59000000"
+                android:startColor="#26FFFFFF"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,269 @@
+name: Android CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_lint:
+        description: "Also publish the Android Lint report"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  JAVA_VERSION: "17"
+  COMPILE_SDK: "34"
+  BUILD_TOOLS: "34.0.0"
+
+jobs:
+  build:
+    name: Build APK (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [debug, release]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Resolve Android SDK
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK" ]; then
+            echo "::error::Android SDK not found at $SDK"
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          SDKMANAGER=""
+          for candidate in "$SDK/cmdline-tools/latest/bin/sdkmanager" "$SDK/tools/bin/sdkmanager"; do
+            if [ -x "$candidate" ]; then SDKMANAGER="$candidate"; break; fi
+          done
+          if [ -n "$SDKMANAGER" ]; then
+            yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+            "$SDKMANAGER" --install "platforms;android-${COMPILE_SDK}" "build-tools;${BUILD_TOOLS}" "platform-tools" || true
+          else
+            echo "::warning::sdkmanager not found — relying on the pre-installed SDK."
+          fi
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Resolve version metadata
+        run: |
+          set -euo pipefail
+          SHORT_SHA="$(git rev-parse --short HEAD)"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION_NAME="${GITHUB_REF#refs/tags/}"
+          else
+            VERSION_NAME="0.1.0-${SHORT_SHA}"
+          fi
+          VERSION_CODE="$(( $(date +%y%m%d) * 100 + $(date +%H) ))"
+          {
+            echo "DBX_VERSION_NAME=${VERSION_NAME}"
+            echo "DBX_VERSION_CODE=${VERSION_CODE}"
+            echo "DBX_SHORT_SHA=${SHORT_SHA}"
+          } >> "$GITHUB_ENV"
+          echo "Building DynabloxL ${VERSION_NAME} (versionCode ${VERSION_CODE})"
+
+      - name: Generate ephemeral signing key
+        if: matrix.variant == 'release'
+        run: |
+          set -euo pipefail
+          KEYSTORE="$RUNNER_TEMP/dynablox-ci.jks"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -storepass "$DBX_STORE_PASS" \
+            -keypass "$DBX_KEY_PASS" \
+            -alias "$DBX_ALIAS" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=DynabloxL CI, OU=Mobile, O=DynabloxL, L=Sao Paulo, C=BR"
+          {
+            echo "DBX_KEYSTORE_FILE=$KEYSTORE"
+            echo "DBX_KEYSTORE_PASSWORD=$DBX_STORE_PASS"
+            echo "DBX_KEY_PASSWORD=$DBX_KEY_PASS"
+            echo "DBX_KEY_ALIAS=$DBX_ALIAS"
+          } >> "$GITHUB_ENV"
+        env:
+          DBX_STORE_PASS: ${{ secrets.DBX_KEYSTORE_PASSWORD || 'dynablox-ci-store' }}
+          DBX_KEY_PASS: ${{ secrets.DBX_KEY_PASSWORD || 'dynablox-ci-key' }}
+          DBX_ALIAS: ${{ secrets.DBX_KEY_ALIAS || 'dynablox' }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build ${{ matrix.variant }} (compile + tests + assemble)
+        id: gradle
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          TASKS=":app:compile${{ matrix.variant == 'release' && 'Release' || 'Debug' }}Kotlin testDebugUnitTest assemble${{ matrix.variant == 'release' && 'Release' || 'Debug' }}"
+          ./gradlew --no-daemon --stacktrace $TASKS 2>&1 | tee build-${{ matrix.variant }}.log
+          EXIT=${PIPESTATUS[0]}
+          echo "gradle_exit=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      - name: Publish failure details as annotations
+        if: steps.gradle.outcome == 'failure'
+        env:
+          LOG_FILE: build-${{ matrix.variant }}.log
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+
+          path = os.environ["LOG_FILE"]
+          raw = open(path, "r", errors="replace").read()
+          lines = raw.splitlines()
+
+          def esc(text):
+              return (text.replace("%", "%25")
+                          .replace("\r", "%0D")
+                          .replace("\n", "%0A"))
+
+          interesting = []
+          patterns = (
+              re.compile(r"^e: "),
+              re.compile(r"^w: .*(deprecat|unresolved)", re.I),
+              re.compile(r"error:", re.I),
+              re.compile(r"AAPT|aapt2"),
+              re.compile(r"^FAILURE:"),
+              re.compile(r"What went wrong"),
+              re.compile(r"^\* Try"),
+              re.compile(r"^\* Exception"),
+              re.compile(r"^> Task .*FAILED"),
+              re.compile(r"Caused by:"),
+              re.compile(r"Unresolved reference"),
+              re.compile(r"Execution failed for task"),
+          )
+          for i, line in enumerate(lines):
+              if any(p.search(line) for p in patterns):
+                  interesting.append(line.strip()[:400])
+                  # keep the two following lines for context on gradle failures
+                  if "What went wrong" in line or "Execution failed" in line:
+                      for j in range(1, 4):
+                          if i + j < len(lines):
+                              interesting.append("    " + lines[i + j].strip()[:400])
+
+          if not interesting:
+              interesting = [l.strip()[:400] for l in lines[-120:] if l.strip()]
+
+          # de-duplicate while preserving order
+          seen = set()
+          unique = []
+          for line in interesting:
+              if line not in seen:
+                  seen.add(line)
+                  unique.append(line)
+
+          body = "\n".join(unique)
+          if len(body) > 24000:
+              body = body[:24000] + "\n... (truncated)"
+
+          chunk = 3000
+          parts = [body[i:i + chunk] for i in range(0, len(body), chunk)] or ["no matching output"]
+          for index, part in enumerate(parts, start=1):
+              print("::error title=Build failure %d/%d (%s)::%s" % (
+                  index, len(parts), os.path.basename(path), esc(part)))
+
+          with open(os.environ.get("GITHUB_STEP_SUMMARY", "/dev/null"), "a") as summary:
+              summary.write("### Build failure — %s\n\n```\n%s\n```\n" % (os.path.basename(path), body[:12000]))
+          sys.exit(1)
+          PY
+
+      - name: Lint report (non blocking, manual runs only)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_lint == 'true' && steps.gradle.outcome == 'success'
+        continue-on-error: true
+        run: ./gradlew --no-daemon lintDebug
+
+      - name: Collect artifacts
+        if: steps.gradle.outcome == 'success'
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          if [ "${{ matrix.variant }}" = "release" ]; then
+            SRC="app/build/outputs/apk/release/app-release.apk"
+            OUT="dist/DynabloxL-${DBX_VERSION_NAME}-release.apk"
+          else
+            SRC="app/build/outputs/apk/debug/app-debug.apk"
+            OUT="dist/DynabloxL-${DBX_VERSION_NAME}-debug.apk"
+          fi
+          if [ ! -f "$SRC" ]; then
+            echo "::error::APK not found at $SRC"
+            find app/build/outputs -type f -name '*.apk' -print || true
+            exit 1
+          fi
+          cp "$SRC" "$OUT"
+          sha256sum "$OUT" | tee "dist/$(basename "$OUT").sha256"
+          ls -la dist
+
+      - name: Upload APK artifact
+        if: steps.gradle.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DynabloxL-${{ matrix.variant }}-apk
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload build log (on failure)
+        if: steps.gradle.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.variant }}
+          path: build-${{ matrix.variant }}.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Publish GitHub Release (tags only)
+        if: matrix.variant == 'release' && steps.gradle.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.apk
+            dist/*.sha256
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+  summary:
+    name: CI status
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix results
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ]; then
+            echo "::error::APK build failed (${{ needs.build.result }})"
+            exit 1
+          fi
+          echo "DynabloxL APK build is green."
