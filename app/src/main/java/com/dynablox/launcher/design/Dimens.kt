@@ -25,8 +25,16 @@ object Dimens {
     fun dp(context: Context, value: Int): Int =
         (value * context.resources.displayMetrics.density * factor).roundToInt()
 
-    fun sp(context: Context, value: Float): Float =
-        value * context.resources.displayMetrics.scaledDensity * factor
+    /**
+     * scaledDensity is deprecated because it cannot express non-linear font scaling, so the sp
+     * value is converted through TypedValue, which honours the user's font-size preference on
+     * every API level.
+     */
+    fun sp(context: Context, value: Float): Float = android.util.TypedValue.applyDimension(
+        android.util.TypedValue.COMPLEX_UNIT_SP,
+        value,
+        context.resources.displayMetrics,
+    ) * factor
 
     /** Inverse of [dp] — used when persisting a dragged position in dp. */
     fun toDp(context: Context, px: Float): Float =

@@ -23,7 +23,10 @@ class FmtTest {
     @Test
     fun `percent always carries the sign`() {
         assertTrue(Fmt.percent(12.5f).endsWith("%"))
-        assertTrue(Fmt.percent(12.5f).contains("12"))
+        // 12.5 with no decimals is a tie, and java.util.Formatter rounds HALF_UP, so the integer
+        // part is 13 — assert against the same call the production code makes instead of a literal.
+        assertEquals("%.0f%%".format(12.5f), Fmt.percent(12.5f))
+        assertEquals("%.1f%%".format(12.5f), Fmt.percent(12.5f, 1))
     }
 
     @Test

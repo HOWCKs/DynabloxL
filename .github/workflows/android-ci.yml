@@ -133,6 +133,47 @@ jobs:
           echo "gradle_exit=$EXIT" >> "$GITHUB_OUTPUT"
           exit $EXIT
 
+      - name: Publish failing unit tests as annotations
+        if: steps.gradle.outcome == 'failure'
+        run: |
+          python3 - <<'PY'
+          import glob, os, sys
+          import xml.etree.ElementTree as ET
+
+          def esc(text):
+              return (text.replace("%", "%25")
+                          .replace("\r", "%0D")
+                          .replace("\n", "%0A"))
+
+          reports = glob.glob("app/build/test-results/**/TEST-*.xml", recursive=True)
+          failures = []
+          for report in reports:
+              try:
+                  root = ET.parse(report).getroot()
+              except Exception:
+                  continue
+              for case in root.iter("testcase"):
+                  for bad in list(case.findall("failure")) + list(case.findall("error")):
+                      failures.append("%s.%s\n%s\n%s" % (
+                          case.get("classname", "?"),
+                          case.get("name", "?"),
+                          (bad.get("message") or "").strip()[:600],
+                          (bad.text or "").strip()[:900],
+                      ))
+
+          if not failures:
+              print("No JUnit failure found in %d report(s)." % len(reports))
+              sys.exit(0)
+
+          for item in failures:
+              print("::error title=Unit test failed::%s" % esc(item))
+
+          with open(os.environ.get("GITHUB_STEP_SUMMARY", "/dev/null"), "a") as summary:
+              summary.write("### Failing unit tests (%d)\n\n" % len(failures))
+              for item in failures:
+                  summary.write("```\n%s\n```\n" % item)
+          PY
+
       - name: Publish failure details as annotations
         if: steps.gradle.outcome == 'failure'
         env:
