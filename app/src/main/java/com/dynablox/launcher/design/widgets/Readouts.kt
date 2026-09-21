@@ -218,7 +218,7 @@ class DigitalReadout @JvmOverloads constructor(
         val a = context.obtainStyledAttributes(attrs, R.styleable.DigitalReadout)
         labelText = a.getString(R.styleable.DigitalReadout_dbxLabel)
         unit = a.getString(R.styleable.DigitalReadout_dbxUnit)
-        value = a.getString(R.styleable.DigitalReadout_dbxValue) ?: "--"
+        value = a.getString(R.styleable.DigitalReadout_dbxText) ?: "--"
         digits = a.getInt(R.styleable.DigitalReadout_dbxDigits, 3)
         if (a.hasValue(R.styleable.DigitalReadout_dbxAccentColor)) {
             accentOverride = a.getColor(R.styleable.DigitalReadout_dbxAccentColor, tokens.accent)

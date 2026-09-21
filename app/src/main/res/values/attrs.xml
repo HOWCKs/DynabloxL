@@ -97,7 +97,7 @@
     <declare-styleable name="DigitalReadout">
         <attr name="dbxLabel" />
         <attr name="dbxUnit" />
-        <attr name="dbxValue" format="string" />
+        <attr name="dbxText" format="string" />
         <attr name="dbxDigits" format="integer" />
         <attr name="dbxAccentColor" />
     </declare-styleable>
