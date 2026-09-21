@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Isometric block core: three chamfered faces, a specular top edge and a status LED. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Drop shadow under the block -->
+    <path
+        android:fillColor="#59000000"
+        android:pathData="M54,86.5 L82,72.5 L82,76.5 L54,90.5 L26,76.5 L26,72.5 Z" />
+
+    <!-- Left face: anodised petrol -->
+    <path
+        android:fillColor="#FF143A4C"
+        android:pathData="M28,44 L54,58 L54,84 L28,70 Z" />
+
+    <!-- Right face: brushed titanium -->
+    <path
+        android:fillColor="#FF1C6280"
+        android:pathData="M80,44 L54,58 L54,84 L80,70 Z" />
+
+    <!-- Top face: electric ceramic -->
+    <path
+        android:fillColor="#FF34A9FF"
+        android:pathData="M54,30 L80,44 L54,58 L28,44 Z" />
+
+    <!-- Specular highlight on the top face -->
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M54,30 L80,44 L67,51 L41,37 Z" />
+
+    <!-- Chamfer edges -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,30 L80,44 L54,58 L28,44 Z M28,44 L28,70 L54,84 L80,70 L80,44 M54,58 L54,84"
+        android:strokeColor="#B3EAF2F6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.6" />
+
+    <!-- Status LED -->
+    <path
+        android:fillColor="#FF3CC794"
+        android:pathData="M67,63.5 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <path
+        android:fillColor="#593CC794"
+        android:pathData="M67,63.5 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+</vector>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme attributes consumed by both XML layouts and the programmatic skeuomorphic
+         design system (see design/ThemeTokens.kt). Two concrete themes provide dark and
+         light material palettes. -->
+    <attr name="dbxSurfaceBase" format="color" />
+    <attr name="dbxSurfaceRaised" format="color" />
+    <attr name="dbxSurfaceInset" format="color" />
+    <attr name="dbxSurfaceGlass" format="color" />
+    <attr name="dbxTextPrimary" format="color" />
+    <attr name="dbxTextSecondary" format="color" />
+    <attr name="dbxTextFaint" format="color" />
+    <attr name="dbxAccent" format="color" />
+    <attr name="dbxAccentDeep" format="color" />
+    <attr name="dbxSuccess" format="color" />
+    <attr name="dbxWarning" format="color" />
+    <attr name="dbxDanger" format="color" />
+    <attr name="dbxMetalLight" format="color" />
+    <attr name="dbxMetalMid" format="color" />
+    <attr name="dbxMetalDark" format="color" />
+    <attr name="dbxChromeHi" format="color" />
+    <attr name="dbxChromeLo" format="color" />
+    <attr name="dbxDivider" format="color" />
+    <attr name="dbxLedOff" format="color" />
+    <attr name="dbxIconTint" format="color" />
+    <attr name="dbxSpecular" format="color" />
+    <attr name="dbxShadow" format="color" />
+
+    <!-- Custom widgets -->
+    <declare-styleable name="SkeuoPanel">
+        <attr name="dbxMaterial" format="enum">
+            <enum name="ceramic" value="0" />
+            <enum name="metal" value="1" />
+            <enum name="glass" value="2" />
+            <enum name="rubber" value="3" />
+        </attr>
+        <attr name="dbxCornerRadius" format="dimension" />
+        <attr name="dbxBevel" format="boolean" />
+        <attr name="dbxInset" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="PhysicalButton">
+        <attr name="dbxLabel" format="string" />
+        <attr name="dbxSubLabel" format="string" />
+        <attr name="dbxIcon" format="reference" />
+        <attr name="dbxAccentColor" format="color" />
+        <attr name="dbxButtonShape" format="enum">
+            <enum name="round" value="0" />
+            <enum name="roundedSquare" value="1" />
+            <enum name="capsule" value="2" />
+        </attr>
+        <attr name="dbxShowLed" format="boolean" />
+        <attr name="dbxLedColor" format="color" />
+        <attr name="dbxCompact" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="IconTile">
+        <attr name="dbxLabel" />
+        <attr name="dbxIcon" />
+        <attr name="dbxAccentColor" />
+        <attr name="dbxShowLabel" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ToggleSwitch">
+        <attr name="dbxLabel" />
+        <attr name="dbxSubLabel" />
+        <attr name="dbxChecked" format="boolean" />
+        <attr name="dbxAccentColor" />
+    </declare-styleable>
+
+    <declare-styleable name="RotaryKnob">
+        <attr name="dbxLabel" />
+        <attr name="dbxValueMin" format="float" />
+        <attr name="dbxValueMax" format="float" />
+        <attr name="dbxValue" format="float" />
+        <attr name="dbxUnit" format="string" />
+        <attr name="dbxAccentColor" />
+    </declare-styleable>
+
+    <declare-styleable name="FaderSlider">
+        <attr name="dbxLabel" />
+        <attr name="dbxValueMin" />
+        <attr name="dbxValueMax" />
+        <attr name="dbxValue" />
+        <attr name="dbxUnit" />
+        <attr name="dbxAccentColor" />
+    </declare-styleable>
+
+    <declare-styleable name="GaugeView">
+        <attr name="dbxLabel" />
+        <attr name="dbxUnit" />
+        <attr name="dbxValueMax" />
+        <attr name="dbxValue" />
+        <attr name="dbxAccentColor" />
+    </declare-styleable>
+
+    <declare-styleable name="DigitalReadout">
+        <attr name="dbxLabel" />
+        <attr name="dbxUnit" />
+        <attr name="dbxValue" format="string" />
+        <attr name="dbxDigits" format="integer" />
+        <attr name="dbxAccentColor" />
+    </declare-styleable>
+
+    <declare-styleable name="LedIndicator">
+        <attr name="dbxLabel" />
+        <attr name="dbxLedColor" />
+        <attr name="dbxLit" format="boolean" />
+    </declare-styleable>
+</resources>

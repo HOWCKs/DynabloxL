@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============ Dark (default) — graphite / titanium / petrol ============ -->
+    <color name="dbx_black">#FF000000</color>
+    <color name="dbx_graphite_deep">#FF080B0D</color>
+    <color name="dbx_graphite">#FF0E1215</color>
+    <color name="dbx_charcoal">#FF151A1E</color>
+    <color name="dbx_titanium">#FF232A2F</color>
+    <color name="dbx_steel">#FF333C42</color>
+    <color name="dbx_steel_light">#FF4A555C</color>
+    <color name="dbx_petrol">#FF143A4C</color>
+    <color name="dbx_petrol_bright">#FF1C6280</color>
+    <color name="dbx_electric">#FF34A9FF</color>
+    <color name="dbx_electric_dim">#FF1E6EAE</color>
+    <color name="dbx_ice">#FFEAF2F6</color>
+    <color name="dbx_silver">#FFB4BFC6</color>
+    <color name="dbx_muted">#FF7C8A93</color>
+    <color name="dbx_amber">#FFE9A63C</color>
+    <color name="dbx_emerald">#FF3CC794</color>
+    <color name="dbx_deep_red">#FFD24A3C</color>
+    <color name="dbx_chrome_hi">#FFF4F8FA</color>
+    <color name="dbx_chrome_lo">#FF5D6A72</color>
+    <color name="dbx_divider">#FF2A3238</color>
+    <color name="dbx_inset">#FF0A0E10</color>
+    <color name="dbx_glass_tint">#CC11171A</color>
+
+    <!-- ============ Light — ivory / warm gray / silver / deep blue ============ -->
+    <color name="dbx_ivory">#FFF6F3EC</color>
+    <color name="dbx_warm_gray">#FFE7E2D8</color>
+    <color name="dbx_warm_gray_deep">#FFD6D0C4</color>
+    <color name="dbx_silver_light">#FFCFD5D9</color>
+    <color name="dbx_deep_blue">#FF16324A</color>
+    <color name="dbx_accent_light">#FF1A6CA6</color>
+    <color name="dbx_text_dark">#FF1B2226</color>
+    <color name="dbx_text_dark_2">#FF4A545B</color>
+    <color name="dbx_text_dark_3">#FF7A848B</color>
+    <color name="dbx_divider_light">#FFD8D2C7</color>
+    <color name="dbx_inset_light">#FFE0DACF</color>
+    <color name="dbx_emerald_deep">#FF1F8F66</color>
+    <color name="dbx_amber_deep">#FFB77B1E</color>
+    <color name="dbx_red_deep">#FFA93A2E</color>
+
+    <!-- Launcher adaptive icon background -->
+    <color name="ic_launcher_background">#FF0E1215</color>
+</resources>

@@ -1,0 +1,193 @@
+name: Android CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_lint:
+        description: "Also publish the Android Lint report"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  JAVA_VERSION: "17"
+  COMPILE_SDK: "34"
+  BUILD_TOOLS: "34.0.0"
+
+jobs:
+  build:
+    name: Build APK (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [debug, release]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Resolve Android SDK
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK" ]; then
+            echo "::error::Android SDK not found at $SDK"
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          SDKMANAGER=""
+          for candidate in "$SDK/cmdline-tools/latest/bin/sdkmanager" "$SDK/tools/bin/sdkmanager"; do
+            if [ -x "$candidate" ]; then SDKMANAGER="$candidate"; break; fi
+          done
+          if [ -n "$SDKMANAGER" ]; then
+            yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+            "$SDKMANAGER" --install "platforms;android-${COMPILE_SDK}" "build-tools;${BUILD_TOOLS}" "platform-tools" || true
+          else
+            echo "::warning::sdkmanager not found — relying on the pre-installed SDK."
+          fi
+          "$SDK/platform-tools/adb" --version || true
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/configuration-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Resolve version metadata
+        run: |
+          set -euo pipefail
+          SHORT_SHA="$(git rev-parse --short HEAD)"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION_NAME="${GITHUB_REF#refs/tags/}"
+          else
+            VERSION_NAME="0.1.0-${SHORT_SHA}"
+          fi
+          VERSION_CODE="$(( $(date +%y%m%d) * 100 + $(date +%H) ))"
+          {
+            echo "DBX_VERSION_NAME=${VERSION_NAME}"
+            echo "DBX_VERSION_CODE=${VERSION_CODE}"
+            echo "DBX_SHORT_SHA=${SHORT_SHA}"
+          } >> "$GITHUB_ENV"
+          echo "Building DynabloxL ${VERSION_NAME} (versionCode ${VERSION_CODE})"
+
+      - name: Generate ephemeral signing key
+        if: matrix.variant == 'release'
+        run: |
+          set -euo pipefail
+          KEYSTORE="$RUNNER_TEMP/dynablox-ci.jks"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -storepass "$DBX_STORE_PASS" \
+            -keypass "$DBX_KEY_PASS" \
+            -alias "$DBX_ALIAS" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=DynabloxL CI, OU=Mobile, O=DynabloxL, L=Sao Paulo, C=BR"
+          {
+            echo "DBX_KEYSTORE_FILE=$KEYSTORE"
+            echo "DBX_KEYSTORE_PASSWORD=$DBX_STORE_PASS"
+            echo "DBX_KEY_PASSWORD=$DBX_KEY_PASS"
+            echo "DBX_KEY_ALIAS=$DBX_ALIAS"
+          } >> "$GITHUB_ENV"
+        env:
+          DBX_STORE_PASS: ${{ secrets.DBX_KEYSTORE_PASSWORD || 'dynablox-ci-store' }}
+          DBX_KEY_PASS: ${{ secrets.DBX_KEY_PASSWORD || 'dynablox-ci-key' }}
+          DBX_ALIAS: ${{ secrets.DBX_KEY_ALIAS || 'dynablox' }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Compile Kotlin (fast feedback)
+        run: ./gradlew --no-daemon --stacktrace :app:compile${{ matrix.variant == 'release' && 'Release' || 'Debug' }}Kotlin
+
+      - name: Unit tests
+        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
+
+      - name: Assemble ${{ matrix.variant }} APK
+        run: ./gradlew --no-daemon --stacktrace assemble${{ matrix.variant == 'release' && 'Release' || 'Debug' }}
+
+      - name: Lint report (non blocking)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_lint == 'true'
+        continue-on-error: true
+        run: ./gradlew --no-daemon lintDebug
+
+      - name: Collect artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          if [ "${{ matrix.variant }}" = "release" ]; then
+            SRC="app/build/outputs/apk/release/app-release.apk"
+            OUT="dist/DynabloxL-${DBX_VERSION_NAME}-release.apk"
+          else
+            SRC="app/build/outputs/apk/debug/app-debug.apk"
+            OUT="dist/DynabloxL-${DBX_VERSION_NAME}-debug.apk"
+          fi
+          if [ ! -f "$SRC" ]; then
+            echo "::error::APK not found at $SRC"
+            find app/build/outputs -type f -name '*.apk' -print || true
+            exit 1
+          fi
+          cp "$SRC" "$OUT"
+          if [ -f app/build/reports/lint-results-debug.html ]; then
+            mkdir -p dist/lint && cp app/build/reports/lint-results-debug.* dist/lint/ || true
+          fi
+          sha256sum "$OUT" | tee "dist/$(basename "$OUT").sha256"
+          ls -la dist
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DynabloxL-${{ matrix.variant }}-apk
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub Release (tags only)
+        if: matrix.variant == 'release' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.apk
+            dist/*.sha256
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+  summary:
+    name: CI status
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix results
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ]; then
+            echo "::error::APK build failed (${{ needs.build.result }})"
+            exit 1
+          fi
+          echo "✅ DynabloxL APK build is green."

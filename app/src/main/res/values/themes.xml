@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- =====================================================================
+         Dark theme — graphite body, titanium panels, petrol + electric accents.
+         ===================================================================== -->
+    <style name="Theme.DynabloxL" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_app_dark</item>
+        <item name="android:colorBackground">@color/dbx_graphite</item>
+        <item name="android:statusBarColor">@color/dbx_graphite_deep</item>
+        <item name="android:navigationBarColor">@color/dbx_graphite_deep</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="colorPrimary">@color/dbx_electric</item>
+        <item name="colorPrimaryDark">@color/dbx_graphite_deep</item>
+        <item name="colorAccent">@color/dbx_electric</item>
+        <item name="android:textColorPrimary">@color/dbx_ice</item>
+        <item name="android:textColorSecondary">@color/dbx_silver</item>
+        <item name="android:textColorHint">@color/dbx_muted</item>
+        <item name="android:textColorLink">@color/dbx_electric</item>
+
+        <!-- Skeuomorphic design tokens -->
+        <item name="dbxSurfaceBase">@color/dbx_graphite</item>
+        <item name="dbxSurfaceRaised">@color/dbx_charcoal</item>
+        <item name="dbxSurfaceInset">@color/dbx_inset</item>
+        <item name="dbxSurfaceGlass">@color/dbx_glass_tint</item>
+        <item name="dbxTextPrimary">@color/dbx_ice</item>
+        <item name="dbxTextSecondary">@color/dbx_silver</item>
+        <item name="dbxTextFaint">@color/dbx_muted</item>
+        <item name="dbxAccent">@color/dbx_electric</item>
+        <item name="dbxAccentDeep">@color/dbx_petrol_bright</item>
+        <item name="dbxSuccess">@color/dbx_emerald</item>
+        <item name="dbxWarning">@color/dbx_amber</item>
+        <item name="dbxDanger">@color/dbx_deep_red</item>
+        <item name="dbxMetalLight">@color/dbx_steel_light</item>
+        <item name="dbxMetalMid">@color/dbx_titanium</item>
+        <item name="dbxMetalDark">@color/dbx_charcoal</item>
+        <item name="dbxChromeHi">@color/dbx_chrome_hi</item>
+        <item name="dbxChromeLo">@color/dbx_chrome_lo</item>
+        <item name="dbxDivider">@color/dbx_divider</item>
+        <item name="dbxLedOff">@color/dbx_steel</item>
+        <item name="dbxIconTint">@color/dbx_silver</item>
+        <item name="dbxSpecular">#33FFFFFF</item>
+        <item name="dbxShadow">#99000000</item>
+    </style>
+
+    <!-- =====================================================================
+         Light theme — white ceramic, warm gray, silver and deep blue.
+         ===================================================================== -->
+    <style name="Theme.DynabloxL.Light" parent="Theme.DynabloxL">
+        <item name="android:windowBackground">@drawable/bg_app_light</item>
+        <item name="android:colorBackground">@color/dbx_ivory</item>
+        <item name="android:statusBarColor">@color/dbx_warm_gray_deep</item>
+        <item name="android:navigationBarColor">@color/dbx_warm_gray_deep</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="colorPrimary">@color/dbx_accent_light</item>
+        <item name="colorPrimaryDark">@color/dbx_deep_blue</item>
+        <item name="colorAccent">@color/dbx_accent_light</item>
+        <item name="android:textColorPrimary">@color/dbx_text_dark</item>
+        <item name="android:textColorSecondary">@color/dbx_text_dark_2</item>
+        <item name="android:textColorHint">@color/dbx_text_dark_3</item>
+        <item name="android:textColorLink">@color/dbx_accent_light</item>
+
+        <item name="dbxSurfaceBase">@color/dbx_ivory</item>
+        <item name="dbxSurfaceRaised">#FFFCFAF5</item>
+        <item name="dbxSurfaceInset">@color/dbx_inset_light</item>
+        <item name="dbxSurfaceGlass">#D9F2EEE5</item>
+        <item name="dbxTextPrimary">@color/dbx_text_dark</item>
+        <item name="dbxTextSecondary">@color/dbx_text_dark_2</item>
+        <item name="dbxTextFaint">@color/dbx_text_dark_3</item>
+        <item name="dbxAccent">@color/dbx_accent_light</item>
+        <item name="dbxAccentDeep">@color/dbx_deep_blue</item>
+        <item name="dbxSuccess">@color/dbx_emerald_deep</item>
+        <item name="dbxWarning">@color/dbx_amber_deep</item>
+        <item name="dbxDanger">@color/dbx_red_deep</item>
+        <item name="dbxMetalLight">#FFEFF1F2</item>
+        <item name="dbxMetalMid">@color/dbx_silver_light</item>
+        <item name="dbxMetalDark">#FFA9B1B6</item>
+        <item name="dbxChromeHi">#FFFFFFFF</item>
+        <item name="dbxChromeLo">#FF98A2A8</item>
+        <item name="dbxDivider">@color/dbx_divider_light</item>
+        <item name="dbxLedOff">@color/dbx_warm_gray_deep</item>
+        <item name="dbxIconTint">@color/dbx_deep_blue</item>
+        <item name="dbxSpecular">#66FFFFFF</item>
+        <item name="dbxShadow">#33221F1A</item>
+    </style>
+
+    <!-- ============================ Typography ============================ -->
+    <style name="Dbx.Text" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/dbxTextPrimary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dbx.Text.Display" parent="Dbx.Text">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="Dbx.Text.Title" parent="Dbx.Text">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+
+    <style name="Dbx.Text.Section" parent="Dbx.Text">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.16</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/dbxTextFaint</item>
+    </style>
+
+    <style name="Dbx.Text.Body" parent="Dbx.Text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingMultiplier">1.25</item>
+    </style>
+
+    <style name="Dbx.Text.Caption" parent="Dbx.Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?attr/dbxTextSecondary</item>
+    </style>
+
+    <style name="Dbx.Text.Mono" parent="Dbx.Text">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <style name="Dbx.Text.Engraved" parent="Dbx.Text">
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.18</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/dbxTextFaint</item>
+        <item name="android:shadowColor">#80000000</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">0.5</item>
+    </style>
+
+    <!-- ============================ Layout helpers ============================ -->
+    <style name="Dbx.Section">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+</resources>
