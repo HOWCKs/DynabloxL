@@ -100,17 +100,23 @@ jobs:
         run: |
           set -euo pipefail
           KEYSTORE="$RUNNER_TEMP/dynablox-ci.jks"
+          # A PKCS12 store (keytool's default since JDK 9) cannot hold a key password that differs
+          # from the store password: the entry is written with the store password and reading it
+          # back with another one fails as BadPaddingException. Keep the two identical.
+          KEY_PASS="$DBX_STORE_PASS"
           keytool -genkeypair -v \
             -keystore "$KEYSTORE" \
+            -storetype PKCS12 \
             -storepass "$DBX_STORE_PASS" \
-            -keypass "$DBX_KEY_PASS" \
+            -keypass "$KEY_PASS" \
             -alias "$DBX_ALIAS" \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -dname "CN=DynabloxL CI, OU=Mobile, O=DynabloxL, L=Sao Paulo, C=BR"
+          keytool -list -keystore "$KEYSTORE" -storepass "$DBX_STORE_PASS" -alias "$DBX_ALIAS" >/dev/null
           {
             echo "DBX_KEYSTORE_FILE=$KEYSTORE"
             echo "DBX_KEYSTORE_PASSWORD=$DBX_STORE_PASS"
-            echo "DBX_KEY_PASSWORD=$DBX_KEY_PASS"
+            echo "DBX_KEY_PASSWORD=$KEY_PASS"
             echo "DBX_KEY_ALIAS=$DBX_ALIAS"
           } >> "$GITHUB_ENV"
         env:
