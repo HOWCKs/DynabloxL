@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============ Dark (default) — graphite / titanium / petrol ============ -->
+    <color name="dbx_black">#FF000000</color>
+    <color name="dbx_graphite_deep">#FF080B0D</color>
+    <color name="dbx_graphite">#FF0E1215</color>
+    <color name="dbx_charcoal">#FF151A1E</color>
+    <color name="dbx_titanium">#FF232A2F</color>
+    <color name="dbx_steel">#FF333C42</color>
+    <color name="dbx_steel_light">#FF4A555C</color>
+    <color name="dbx_petrol">#FF143A4C</color>
+    <color name="dbx_petrol_bright">#FF1C6280</color>
+    <color name="dbx_electric">#FF34A9FF</color>
+    <color name="dbx_electric_dim">#FF1E6EAE</color>
+    <color name="dbx_ice">#FFEAF2F6</color>
+    <color name="dbx_silver">#FFB4BFC6</color>
+    <color name="dbx_muted">#FF7C8A93</color>
+    <color name="dbx_amber">#FFE9A63C</color>
+    <color name="dbx_emerald">#FF3CC794</color>
+    <color name="dbx_deep_red">#FFD24A3C</color>
+    <color name="dbx_chrome_hi">#FFF4F8FA</color>
+    <color name="dbx_chrome_lo">#FF5D6A72</color>
+    <color name="dbx_divider">#FF2A3238</color>
+    <color name="dbx_inset">#FF0A0E10</color>
+    <color name="dbx_glass_tint">#CC11171A</color>
+
+    <!-- ============ Light — ivory / warm gray / silver / deep blue ============ -->
+    <color name="dbx_ivory">#FFF6F3EC</color>
+    <color name="dbx_warm_gray">#FFE7E2D8</color>
+    <color name="dbx_warm_gray_deep">#FFD6D0C4</color>
+    <color name="dbx_silver_light">#FFCFD5D9</color>
+    <color name="dbx_deep_blue">#FF16324A</color>
+    <color name="dbx_accent_light">#FF1A6CA6</color>
+    <color name="dbx_text_dark">#FF1B2226</color>
+    <color name="dbx_text_dark_2">#FF4A545B</color>
+    <color name="dbx_text_dark_3">#FF7A848B</color>
+    <color name="dbx_divider_light">#FFD8D2C7</color>
+    <color name="dbx_inset_light">#FFE0DACF</color>
+    <color name="dbx_emerald_deep">#FF1F8F66</color>
+    <color name="dbx_amber_deep">#FFB77B1E</color>
+    <color name="dbx_red_deep">#FFA93A2E</color>
+
+    <!-- =====================================================================
+         CLAY MORPHIST — pressed matter.
+
+         The machined palette above is cold on purpose (graphite + petrol reads as
+         anodised metal). Clay needs the opposite bias: every neutral carries a red/ochre
+         component, because unfired matter is never grey. The accents are pigments —
+         oxide, slate and kiln — not LEDs, so nothing glows.
+         ===================================================================== -->
+    <color name="clay_void">#FF16110F</color>
+    <color name="clay_base">#FF1E1815</color>
+    <color name="clay_raised">#FF29211D</color>
+    <color name="clay_raised_hi">#FF352A25</color>
+    <color name="clay_inset">#FF150F0D</color>
+    <color name="clay_glass">#CC231B18</color>
+    <color name="clay_divider">#FF3A2E28</color>
+    <color name="clay_text">#FFF2E9E2</color>
+    <color name="clay_text_2">#FFC3B2A8</color>
+    <color name="clay_text_3">#FF8B7A70</color>
+    <color name="clay_oxide">#FFE0724A</color>
+    <color name="clay_oxide_deep">#FF8C3F27</color>
+    <color name="clay_slate">#FF6E8B94</color>
+    <color name="clay_sage">#FF7FA88A</color>
+    <color name="clay_kiln">#FFD9A15C</color>
+    <color name="clay_ember">#FFC4553F</color>
+    <color name="clay_light_hi">#FFFFF3EA</color>
+    <color name="clay_light_lo">#FF7A685F</color>
+    <color name="clay_off">#FF3F332D</color>
+
+    <!-- Clay, light: porcelain slip — warm bisque, never white. -->
+    <color name="clay_l_base">#FFEFE7DE</color>
+    <color name="clay_l_raised">#FFF7F1EA</color>
+    <color name="clay_l_inset">#FFE2D8CD</color>
+    <color name="clay_l_glass">#D9F2EBE3</color>
+    <color name="clay_l_divider">#FFDDD2C6</color>
+    <color name="clay_l_text">#FF2A211C</color>
+    <color name="clay_l_text_2">#FF5E5048</color>
+    <color name="clay_l_text_3">#FF8C7D73</color>
+    <color name="clay_l_oxide">#FFB4502E</color>
+    <color name="clay_l_oxide_deep">#FF7A3520</color>
+    <color name="clay_l_slate">#FF4A626B</color>
+    <color name="clay_l_sage">#FF44715A</color>
+    <color name="clay_l_kiln">#FF9A6520</color>
+    <color name="clay_l_ember">#FFA33F2B</color>
+    <color name="clay_l_off">#FFCFC2B5</color>
+
+    <!-- Launcher adaptive icon background -->
+    <color name="ic_launcher_background">#FF0E1215</color>
+</resources>

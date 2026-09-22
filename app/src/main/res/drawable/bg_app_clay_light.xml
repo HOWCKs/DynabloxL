@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Porcelain slip: bisque ground, warm key from the upper left, ochre settle at the floor. -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="290"
+                android:startColor="#FFF6F0E8"
+                android:centerColor="#FFEFE7DE"
+                android:endColor="#FFE4DACE"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.24"
+                android:centerY="0.06"
+                android:gradientRadius="980"
+                android:startColor="#33FFF3EA"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.92"
+                android:centerY="0.96"
+                android:gradientRadius="760"
+                android:startColor="#14B4502E"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>
