@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 8dp spatial rhythm -->
+    <dimen name="dbx_space_xs">4dp</dimen>
+    <dimen name="dbx_space_s">8dp</dimen>
+    <dimen name="dbx_space_m">12dp</dimen>
+    <dimen name="dbx_space_l">16dp</dimen>
+    <dimen name="dbx_space_xl">24dp</dimen>
+    <dimen name="dbx_space_xxl">32dp</dimen>
+
+    <!-- Comfortable touch targets (>= 48dp) -->
+    <dimen name="dbx_touch_min">48dp</dimen>
+    <dimen name="dbx_touch_comfortable">56dp</dimen>
+
+    <!-- Radii -->
+    <dimen name="dbx_radius_s">8dp</dimen>
+    <dimen name="dbx_radius_m">14dp</dimen>
+    <dimen name="dbx_radius_l">20dp</dimen>
+    <dimen name="dbx_radius_xl">28dp</dimen>
+    <dimen name="dbx_radius_pill">999dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="dbx_elev_s">2dp</dimen>
+    <dimen name="dbx_elev_m">6dp</dimen>
+    <dimen name="dbx_elev_l">12dp</dimen>
+    <dimen name="dbx_elev_xl">20dp</dimen>
+
+    <!-- Components -->
+    <dimen name="dbx_orb_size">64dp</dimen>
+    <dimen name="dbx_tile_size">60dp</dimen>
+    <dimen name="dbx_tile_icon">26dp</dimen>
+    <dimen name="dbx_panel_width">360dp</dimen>
+    <dimen name="dbx_hud_width">176dp</dimen>
+    <dimen name="dbx_gauge_size">112dp</dimen>
+    <dimen name="dbx_knob_size">76dp</dimen>
+    <dimen name="dbx_switch_w">64dp</dimen>
+    <dimen name="dbx_switch_h">34dp</dimen>
+    <dimen name="dbx_stroke_hair">1dp</dimen>
+</resources>

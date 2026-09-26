@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Forged backdrop: a near-black chassis interior. The two accent pools sit in opposite
+        corners at very low alpha so the panels floating above always out-contrast the room —
+        a bright backdrop is what makes most "gamer" UIs unreadable.
+    -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#FF101318"
+                android:centerColor="#FF0C0E11"
+                android:endColor="#FF060709"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.14"
+                android:centerY="0.04"
+                android:gradientRadius="820"
+                android:startColor="#26FF3B47"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.94"
+                android:centerY="0.97"
+                android:gradientRadius="700"
+                android:startColor="#1CE0407F"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>

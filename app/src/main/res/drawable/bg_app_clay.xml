@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Clay backdrop. One warm light source from the upper left, falling into an ochre-shaded
+        floor — the same lighting the Clay material assumes, so a panel never contradicts the room
+        it sits in. No blue: the machined backdrop is lit by petrol, this one by kiln heat.
+    -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="290"
+                android:startColor="#FF241C19"
+                android:centerColor="#FF1E1815"
+                android:endColor="#FF130F0D"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- Key light: broad, low intensity, upper left. -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.24"
+                android:centerY="0.06"
+                android:gradientRadius="980"
+                android:startColor="#22D9A15C"
+                android:centerColor="#0EC4553F"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+    <!-- Bounce light: cool slate from the lower right, so the warmth has something to read against. -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.92"
+                android:centerY="0.96"
+                android:gradientRadius="760"
+                android:startColor="#166E8B94"
+                android:endColor="#00000000"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>

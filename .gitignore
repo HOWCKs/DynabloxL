@@ -1,0 +1,20 @@
+# Gradle / Android
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk.idsig
+output-metadata.json
+
+# Keystores — never commit signing material
+*.jks
+*.keystore
+ci-release.jks
+
+# Logs
+*.log
