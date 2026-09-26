@@ -74,15 +74,27 @@ class FinishTest {
             val mapped = when (setting) {
                 AppSettings.SurfaceFinish.CLAY -> Finish.CLAY
                 AppSettings.SurfaceFinish.MACHINED -> Finish.MACHINED
+                AppSettings.SurfaceFinish.FORGED -> Finish.FORGED
             }
             assertEquals(setting.name, mapped.name)
         }
     }
 
     @Test
-    fun `clay is the default finish because it is the product identity`() {
-        // Persisted by name: renaming a constant would reset every user to the other vocabulary.
+    fun `finish constants are persisted by name and must not be renamed`() {
+        // Persisted by name: renaming a constant would reset every user to another vocabulary.
         assertEquals("CLAY", AppSettings.SurfaceFinish.CLAY.name)
         assertEquals("MACHINED", AppSettings.SurfaceFinish.MACHINED.name)
+        assertEquals("FORGED", AppSettings.SurfaceFinish.FORGED.name)
+    }
+
+    @Test
+    fun `adding a finish never removes one`() {
+        // The booster added FORGED; the two earlier vocabularies stay selectable, because users
+        // who chose them did so deliberately.
+        assertEquals(3, Finish.values().size)
+        listOf("MACHINED", "CLAY", "FORGED").forEach { name ->
+            assertTrue(Finish.values().any { it.name == name })
+        }
     }
 }
