@@ -17,11 +17,12 @@ import org.junit.Test
 class FinishTest {
 
     @Test
-    fun `both finishes are reachable and distinct`() {
+    fun `every finish is reachable and distinct`() {
         val all = Finish.values().toList()
-        assertEquals(2, all.size)
+        assertEquals(all.size, all.map { it.name }.toSet().size)
         assertTrue(all.contains(Finish.MACHINED))
         assertTrue(all.contains(Finish.CLAY))
+        assertTrue(all.contains(Finish.FORGED))
     }
 
     @Test
